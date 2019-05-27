@@ -27,7 +27,7 @@ This Repo only for who have attended the STEM Public class
 
 请同学们注意以下时间节点，节点任务的完成有助于大家顺利提交作品。
 
-![](http://ww3.sinaimg.cn/large/006tNc79ly1g3fozixzh1j30p50h8dk6.jpg)
+![](http://ww4.sinaimg.cn/large/006tNc79ly1g3frdmvr5bj30p20h5aec.jpg)
 
 ### 作品硬件购买清单（5-27 ~ 5-28）
 
