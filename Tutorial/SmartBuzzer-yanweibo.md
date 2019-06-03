@@ -24,7 +24,7 @@
 2.1 LED小灯
 1. 认识LED小灯，小灯两条针脚一长一短，长针是正极，短针是负极，可以用“长正短负”的口诀来记住。
 2. 尝试接线，LED小灯可以连接在任意两个D口上，在这个例子中，用的是D5和D6端口。
-![](http://ww3.sinaimg.cn/large/006tNc79gy1g3o20zvf7bj30ek0j0t9x.jpg)
+![](http://ww3.sinaimg.cn/large/006tNc79gy1g3o4bywo9lj30na0kewg6.jpg)
 3. 打开Arduino IDE，编写以下代码，注意不要复制粘贴，注释也要抄上
 ```
 /*
@@ -107,7 +107,7 @@ _tone(note_G0,50,30);
 
 3. 测试并理解代码
 
-代码比较长，点击[链接]() 获取。
+代码比较长，点击[链接](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/Buzzer_Simple_Test/Buzzer_Simple_Test.ino) 获取。
 “#define” 部分的代码可以复制到IDE中，后面的部分需要手动键入，有助于理解程序
 
 4. 解决问题
