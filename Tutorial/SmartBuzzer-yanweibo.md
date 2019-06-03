@@ -122,6 +122,13 @@ _tone(note_G0,50,30);
 当红外线传感器返回值（SensorState）大于某个数值时，让LED灯开始闪烁，同时让蜂鸣器也响起来
 
 #### 4. 外观设计
+外形参考：
+![](http://ww4.sinaimg.cn/large/006tNc79gy1g3o4ofwowdj30hg0d4754.jpg)
+![](http://ww1.sinaimg.cn/large/006tNc79gy1g3o4pj8e1uj30hg0d43zq.jpg)
+
+需要用Fusion360修改的地方：
+- 不需要那么大的喇叭，可以把整体造型弄得更小
+- 留出电池和开关的位置
 
 #### 5. 3D打印
 
