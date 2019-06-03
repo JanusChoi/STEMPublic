@@ -15,7 +15,7 @@
 
 #### 1. 准备工作
 安装软件
-- fritzing
+- fritzing [Windows64位板下载](http://fritzing.org/download/0.9.3b/windows-64bit/fritzing.0.9.3b.64.pc.zip)
 - Fusion360
 - Cura
 - Arduino IDE
