@@ -123,6 +123,7 @@ _tone(note_G0,50,30);
 
 #### 4. 外观设计
 外形参考：
+
 ![](http://ww4.sinaimg.cn/large/006tNc79gy1g3o4ofwowdj30hg0d4754.jpg)
 ![](http://ww1.sinaimg.cn/large/006tNc79gy1g3o4pj8e1uj30hg0d43zq.jpg)
 
