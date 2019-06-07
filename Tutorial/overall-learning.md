@@ -11,7 +11,15 @@
         -   [2.1 LED小灯](#21-led小灯)
         -   [2.2 HC-SR501](#22-hc-sr501)
         -   [2.3 蜂鸣器模块](#23-蜂鸣器模块)
-
+        -   [2.4 开关类](#24-开关类)
+        -   [2.5 脉搏传感器](#26-脉搏传感器)
+        -   [2.6 A9G开发板](#27-A9G开发板)
+        -   [2.7 温湿度传感器](#28-温湿度传感器)
+        -   [2.8 红外体温计](#29-红外体温计)
+        -   [2.9 彩色显示屏](#210-彩色显示屏)
+        -   [2.10 OLED显示屏](#211-OLED显示屏)
+        -   [2.11 震动马达模块](#211-2.11 震动马达模块)
+    -   [3. 套件测试教程](#3-套件测试教程)
 
 ## 1. 准备工作
 
@@ -28,8 +36,9 @@
 学会使用 fritzing 来绘制电路图
 
 请查看以下教程自学：
-[官方英文](http://fritzing.org/learning/tutorials)
-[搜索B站](https://www.bilibili.com/video/av17886787/)
+
+- [官方英文](http://fritzing.org/learning/tutorials)
+- [搜索B站](https://www.bilibili.com/video/av17886787/)
 
 先学会在上面画：nano 连 面包板 连 LED灯 的电路图即可
 
@@ -132,3 +141,261 @@ _tone(note_G0,50,30);
 4. 解决问题
 - 有没有发现蜂鸣器奏出来的小星星很难听？这是因为节奏不对，那么要怎样调整？修改一些参数试试看吧
 - 报警的音符应该是怎样响的？利用搜索引擎找一下蜂鸣器报警的代码，试试看
+
+### 2.4 开关类
+按压式开关，Dpdt开关
+
+
+### 2.5 脉搏传感器
+
+1. 了解Q333脉搏传感器接线如下
+- + 接 nano的 3.3V
+- - 接 nano的 GND
+- S 接 nano的 A0
+
+2. 安装库文件
+
+使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包
+
+- 搜索 PulseSensor 并安装
+
+3. 在Arduino IDE中输入以下示例程序
+
+```
+/*  示例代码
+By @PastorEdu
+--------描述------------------------------------------
+1) 在串口监视器中显示脉搏BPM值
+2) 当脉搏被检测到时输出: "♥  A HeartBeat Happened !"
+2) 使用了PulseSensor库的对象
+4) 内置pin13小灯会跟随脉搏闪动
+--------------------------------------------------------------------*/
+
+#define USE_ARDUINO_INTERRUPTS true    // 设置这个参数以获得更准确的读数
+#include <PulseSensorPlayground.h>     // 导入库文件
+//  Variables
+const int PulseWire = 0;       // 设置A0
+const int LED13 = 13;          // 设置LED端口
+int Threshold = 550;           // 信息阈值，默认550
+PulseSensorPlayground pulseSensor;  // 创建一个PulseSensorPlayground类，名字叫pulseSensor
+
+void setup() {  
+
+  Serial.begin(9600);          // 设置串口波特率，与串口监视器相关
+
+  pulseSensor.analogInput(PulseWire);  //输入信号
+  pulseSensor.blinkOnPulse(LED13);       //调用函数与LED联动
+  pulseSensor.setThreshold(Threshold);  //设置阈值
+
+  // 这里使用条件语句是为了更严谨，先判断是否有检测到脉搏
+   if (pulseSensor.begin()) {
+    Serial.println("We created a pulseSensor Object !");
+  }
+}
+
+void loop() {
+  int myBPM = pulseSensor.getBeatsPerMinute();  // 返回BPM值
+
+  if (pulseSensor.sawStartOfBeat()) {            // 重复检测是否有检测到脉搏
+    Serial.println("♥  A HeartBeat Happened ! "); // 检测到后输出通知
+    Serial.print("BPM: ");                        
+    Serial.println(myBPM);                        // 显示BPM值
+  }
+  delay(20);                    // 等待20毫秒后继续
+}
+```
+
+### 2.6 A9G开发板
+
+### 2.7 温湿度传感器
+
+1. 了解DHXX系列温湿度传感器接线如下
+- VCC 接 nano的 5V
+- GND 接 nano的 GND
+- DATA 接 nano的 D2
+
+2. 安装库文件
+
+使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包
+
+- 搜索 DHT sensor library 并安装
+- 搜索 Adafruit Unified Sensor 并安装
+
+3. 在Arduino IDE中输入以下示例程序
+
+```
+/*
+* DHT humidity and temperature Arduino Tutorial
+* by Dicson Pan @PastorEdu
+*/
+
+#include "DHT.h"
+
+#define DHTPIN 2     // 本例中使用D2
+
+// 根据你的传感器型号注释以下代码
+// 本利使用DHT22，故DHT22那一行代码没有被注释
+
+//#define DHTTYPE DHT11   // DHT 11
+#define DHTTYPE DHT22   // DHT 22  (AM2302)
+//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+
+// Connect pin 1 (on the left) of the sensor to +5V
+// NOTE: If using a board with 3.3V logic like an Arduino Due connect pin 1
+// to 3.3V instead of 5V!
+// Connect pin 2 of the sensor to whatever your DHTPIN is
+// Connect pin 4 (on the right) of the sensor to GROUND
+// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
+
+// 初始化DHT传感器
+DHT dht(DHTPIN, DHTTYPE);
+
+// NOTE: For working with a faster chip, like an Arduino Due or Teensy, you
+// might need to increase the threshold for cycle counts considered a 1 or 0.
+// You can do this by passing a 3rd parameter for this threshold.  It's a bit
+// of fiddling to find the right value, but in general the faster the CPU the
+// higher the value.  The default for a 16mhz AVR is a value of 6.  For an
+// Arduino Due that runs at 84mhz a value of 30 works.
+// Example to initialize DHT sensor for Arduino Due:
+//DHT dht(DHTPIN, DHTTYPE, 30);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("DHTxx test!");
+
+  dht.begin();
+}
+
+void loop() {
+  // 等待2秒
+  delay(2000);
+
+  // 读数需用时大约250毫秒
+
+  float h = dht.readHumidity();        // 读取湿度数值
+  float t = dht.readTemperature();     // 读取温度数值（摄氏度）
+  float f = dht.readTemperature(true); // 读取温度数值（华氏度）
+
+  // 检查是否有检测失败
+  if (isnan(h) || isnan(t) || isnan(f)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  // 计算热度
+  float hi = dht.computeHeatIndex(f, h);
+
+  Serial.print("Humidity: ");
+  Serial.print(h);   //输出湿度
+  Serial.print(" %");
+  Serial.print("\t");
+  Serial.print("Temperature: ");
+  Serial.print(t);   //输出温度
+  Serial.println(" *C ");
+  //Serial.print(f);
+ // Serial.print(" *F\t");
+ // Serial.print("Heat index: ");
+ // Serial.print(hi);  //输出热度
+ // Serial.println(" *F");
+}
+```
+
+3. 上传测试代码并尝试理解
+- 打开串口监视器观察传感器输出的数值
+- 试试用手握住传感器，温度是不是变高了？
+
+4. 通过搜索引擎去了解温湿度传感器的工作原理
+
+### 2.8 红外体温计
+
+MLX90615
+
+### 2.9 彩色显示屏
+
+1. 接线说明
+ RS(DC)    - D08
+ RST       - D09
+ CS        - D10
+ SDA(MOSI) - D11
+ CLK(SCK)  - D13
+
+2. 安装库文件
+使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包
+
+- 搜索 Adafruit_GFX 并安装
+- 搜索 Adafruit_ST7735 并安装
+- 搜索 Adafruit_ST7789
+
+使用这里的[代码](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/tftlcdst7735_test/tftlcdst7735_test.ino)进行测试学习。
+
+保留你所需要的功能，比如显示文字则是代码中的```// large block of text```那部分。
+
+### 2.10 OLED显示屏
+
+### 2.11 震动马达模块
+
+基本上和使用LED小灯一样简单，只要给IN一个高电平，就能让它实现震动，建议参考LED小灯的教程来尝试。
+或使用如下代码，需要自行补充注释。
+
+```
+/*
+示例代码
+*/
+#define Sensor_IN 5; //在这里补充注释
+
+void setup() {
+  pinMode(Sensor_IN, OUTPUT); //在这里补充注释
+}
+
+void loop() {
+  digitalWrite(Sensor_IN, HIGH);   //在这里补充注释
+  delay(1000);
+  digitalWrite(Sensor_IN, LOW);    //在这里补充注释
+  delay(1000);
+}
+```
+
+
+## 3. 套件测试教程
+
+### 3.1 麦克纳姆轮车（未完成）
+
+1. 套件说明
+- 小车底盘及外壳
+- 麦克纳姆轮 4个
+- 带霍尔编码器电机 + 联轴器 4个
+- L298N四路电机板
+- Arduino Uno/Nano
+
+2. 接线说明
+
+| Arduino板载 | L298N | 连接内容     | 备注                    |
+| -------- | ------- | ------------ | ----------------------- |
+| 2        | IN1     | 右前马达      |           |
+| 4        | IN2     | 右前马达      |           |
+| 3        | EN1     | 右前马达PMW   |           |
+| 7        | IN3     | 左前马达      |           |
+| 6        | IN4     | 左前马达      |           |
+| 5        | EN2     | 左前马达PWM   |           |
+| 9        | IN5     | 右后马达      |           |
+| 8        | IN6     | 右后马达      |           |
+| 10       | EN3     | 右后马达PWM   |           |
+| 12       | IN7     | 左后马达      |           |
+| 13       | IN8     | 左后马达      |           |
+| 11       | EN4     | 左后马达PWM   |           |
+|          | VCC     | 12V电源正极   |           |
+|          | GND     | 12V电源负极   |           |
+| 5V       | 5V      |              |           |
+| GND      | GND     |              |           |
+|          | OUT1    | 右前马达正极   |           |
+|          | OUT2    | 右前马达负极   |           |
+|          | OUT3    | 左前马达正极   |           |
+|          | OUT4    | 左前马达负极   |           |
+|          | OUT5    | 右后马达正极   |           |
+|          | OUT6    | 右后马达负极   |           |
+|          | OUT7    | 左后马达正极   |           |
+|          | OUT8    | 左后马达负极   |           |
+| 34       |         | 左灯负极     |                         |
+| 36       | 16      | L298N IN1    | 转向马达                |
+| 37       | 26      | L298N IN2    | 转向马达                |
+| 39       |         | 激光灯负极   |                         |
