@@ -392,16 +392,51 @@ void loop() {
 
 ## 3. 套件测试教程
 
-### 3.1 麦克纳姆轮车（未完成）
+### 3.1 麦克纳姆轮车
 
 1. 套件说明
 - 小车底盘及外壳
 - 麦克纳姆轮 4个
 - 带霍尔编码器电机 + 联轴器 4个
 - L298N四路电机板
-- Arduino Uno/Nano
+- Arduino Nano + 扩展板
 
-2. 接线说明
+2. 了解L298N
+
+这是一个两路L298N的针脚说明，在本作品中采用的是四路L298N电机板（N路的意思是可以控制N个电机），相当于把两个电机板拼接在一起使用
+
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g3ux7cwc8nj30jy0cg0ui.jpg)
+
+L298N是通过三个输出和两个输出来控制马达的，三个输入为
+- IN1 对应图中的Input 1
+- IN2 对应图中的Input 2
+- EN1 对应图中的Enable A
+
+两个输出为
+- OUT1 对应图中的 MotorA的一端
+- OUT2 对应图中的 MotorA的一端
+
+其中IN1和IN2是控制马达转动方向的，EN1则是PWM信号负责驱动马达转动的，比如
+- IN1=1 IN2=0 EN1=255 时，马达以正方向，255的速度转动
+- IN1=0 IN2=0 EN1=255 时，马达以反方向，255的速度转动
+
+3. 接线说明
+
+单个马达调试接线：
+
+| Arduino板载 | L298N | 连接内容     | 备注                    |
+| -------- | ------- | ------------ | ----------------------- |
+| 2        | IN1     | 马达方向      |           |
+| 4        | IN2     | 马达方向      |           |
+| 3        | EN1     | 马达PMW      |           |
+|          | VCC     | 12V电源正极   |           |
+|          | GND     | 12V电源负极   |           |
+| 5V       | 5V      |              |           |
+| GND      | GND     |              |           |
+|          | OUT1    | 马达正极      |           |
+|          | OUT2    | 马达负极      |           |
+
+整车接线
 
 | Arduino板载 | L298N | 连接内容     | 备注                    |
 | -------- | ------- | ------------ | ----------------------- |
@@ -429,7 +464,102 @@ void loop() {
 |          | OUT6    | 右后马达负极   |           |
 |          | OUT7    | 左后马达正极   |           |
 |          | OUT8    | 左后马达负极   |           |
-| 34       |         | 左灯负极     |                         |
-| 36       | 16      | L298N IN1    | 转向马达                |
-| 37       | 26      | L298N IN2    | 转向马达                |
-| 39       |         | 激光灯负极   |                         |
+
+编码器说明：
+
+![](http://ww2.sinaimg.cn/large/006tNc79ly1g3ux2d6dm0j30u00ljmya.jpg)
+
+M1 和 M2 是电机的正负极，只需接入这两个就可以让电机转动起来了。
+中间的四条线都是霍尔编码器使用的，其中由上往下说明如下：
+- 5V负极：接nano的GND
+- A相：接nano的A0（或A0~A7的其中一个）
+- B相：接nano的A1（或A0~A7的其中一个）
+- 5V正极：接nano的5V（使用扩展板后有大量的5V和GND针脚可用）
+
+对此感兴趣的同学可到网上搜索更多有关“霍尔传感器测速原理”进行深入了解。
+
+3. 测试单个马达的示例程序(含霍尔编程器测速代码)
+
+```
+/*
+ * Code developped by @PastorEdu
+ */
+
+//单个马达测试代码 For Nano
+//Define the Pins
+#define pinIN1 2     //nano的D2 接上 L298N的IN1
+#define pinIN2 4     //nano的D4 接上 L298N的IN2
+#define pinPWM 3     //nano的D3 接上 L298N的EN1
+#define pinA A0      //编码器的A相 接上 nano的A0
+#define pinB A1      //编码器的B相 接上 nano的A1
+
+const int d_time=100;
+int speed = 255;
+int i = 0;
+int valA = 0;
+int valB = 0;
+unsigned long duration = 0;
+unsigned long times;
+unsigned long newtime;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  //Set the PIN Modes
+  pinMode(pinIN1, OUTPUT);
+  pinMode(pinIN2, OUTPUT);
+  pinMode(pinPWM, OUTPUT);
+  pinMode(pinA, INPUT);
+  pinMode(pinB, INPUT);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  Serial.println("前");
+
+  digitalWrite(pinIN1, 1);
+  digitalWrite(pinIN2, 0);
+  analogWrite(pinPWM, speed);
+  SpeedCheck();
+  delay(2000);
+
+  Serial.println("结束");
+  analogWrite(pinPWM, 0);
+  delay(1000);
+
+
+  Serial.println("后");
+  digitalWrite(pinIN1, 0);
+  digitalWrite(pinIN2, 1);
+  analogWrite(pinPWM, speed);
+  delay(2000);
+
+  Serial.println("结束");
+  analogWrite(pinPWM, 0);
+  delay(1000);
+
+}
+
+// 霍尔编码器测速代码
+void SpeedCheck()
+{
+  newtime = times = millis();
+  while((newtime - times) < d_time){
+    if(digitalRead(pinA)==HIGH){
+      valA++;
+    };
+    if(digitalRead(pinB)==HIGH){
+      valB++;
+    };
+    newtime = millis();
+  }
+  duration = (valA + valB)/(1.496 * d_time);
+
+  Serial.print("v is");
+  Serial.print(duration);
+  Serial.println("rad/s");
+
+}
+```
