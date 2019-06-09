@@ -207,6 +207,40 @@ void loop() {
 
 ### 2.6 A9G开发板
 
+此开发板为安可信科技开发的GSM/GPRS+GPS模块，功能非常强大，可以单独使用。感兴趣的同学可以在网上搜寻更多相关资料，本教程提供用Arduino进行相关开发的示例。
+
+1. 了解接线：
+
+A9G的引脚说明图
+
+![](http://ww2.sinaimg.cn/large/006tNc79ly1g3uvwkappwj30ml0ghn1y.jpg)
+
+与nano的接线
+
+- VUSB 接 nano的5V
+- GND  接 nano的GND
+- D2   接 AT_TX
+- D3   接 AT_RX
+
+使用前请将一张SIM卡放入开发板背后的槽中，上推揭开之后放入。
+
+2. 示例代码
+
+代码比较长，点击[链接](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/a9g_test/a9g_test.ino) 获取。
+
+接线完成后，先不要上传代码，请仔细查看代码内容，注意修改
+```
+Serial1.println("AT+CMGS=13513551355"); //这里要改成你能收到短信的电话号码
+```
+这里的信息。
+
+上传代码后观察串口监视器，该程序会发一条短信到你设定的手机号码
+
+3. 练习
+- 试试修改你的短信内容
+- 在网上搜索“AT指令”了解更多相关内容
+- 尝试自己完成发送中文短信的代码（示例中有）
+
 ### 2.7 温湿度传感器
 
 1. 了解DHXX系列温湿度传感器接线如下
