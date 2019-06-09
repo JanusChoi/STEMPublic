@@ -478,7 +478,7 @@ M1 和 M2 是电机的正负极，只需接入这两个就可以让电机转动�
 
 对此感兴趣的同学可到网上搜索更多有关“霍尔传感器测速原理”进行深入了解。
 
-3. 测试单个马达的示例程序(含霍尔编程器测速代码)
+4. 测试单个马达的示例程序(含霍尔编程器测速代码)
 
 ```
 /*
@@ -563,3 +563,18 @@ void SpeedCheck()
 
 }
 ```
+
+5. 麦克纳姆运动方向说明
+
+轮子倾斜的方向跟行进方向是很有关系的，一般轮子的安装方式就是俯视车子会呈现"X"状，轮子转动方向和车子行进方向之间的关系如下图所示：
+
+前后移动
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g3uy0rygj7j30pk0ak0u2.jpg)
+左转右转
+![](http://ww4.sinaimg.cn/large/006tNc79ly1g3uy29kgkij30pk0ak3zu.jpg)
+左前右前
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g3uy2jdv2rj30pk0ak0tz.jpg)
+左后右后
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g3uy2thhpwj30pk0ak75j.jpg)
+顺时针转和逆时针转
+![](http://ww2.sinaimg.cn/large/006tNc79ly1g3uy33a1eij30pk0ak3zx.jpg)
