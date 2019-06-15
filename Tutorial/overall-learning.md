@@ -145,6 +145,8 @@ _tone(note_G0,50,30);
 ### 2.4 开关类
 按压式开关，Dpdt开关
 
+开关的使用非常简单，建议参考LED小灯的使用教程，并且利用搜索引擎查找开关使用方法，进行接线和代码的测试。
+
 
 ### 2.5 脉搏传感器
 
@@ -241,6 +243,22 @@ Serial1.println("AT+CMGS=13513551355"); //这里要改成你能收到短信的�
 - 在网上搜索“AT指令”了解更多相关内容
 - 尝试自己完成发送中文短信的代码（示例中有）
 
+4. GPS数据获取示例
+
+调试代码前需要安装TinyGPS程序包，在[这里](https://github.com/mikalhart/TinyGPSPlus/archive/v1.0.2.zip)下载
+
+步骤是在Arduino中依次点击：项目 - 加载库 - 添加.zip库，然后选择刚刚下载好的文件即可，如下图：
+
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g41ok9dakuj318q0asgrk.jpg)
+
+代码请点击[链接](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/a9g_test/a9g_GPS_test.ino)获取
+
+GPS示例代码是在发送短信代码的基础上添加了initGPS()函数，并且在loop()函数中加入了GPS数据输出，详细请阅读代码
+
+
+
+**注意该代码在室内无法返回有效数据，需在室外进行调试**
+
 ### 2.7 温湿度传感器
 
 1. 了解DHXX系列温湿度传感器接线如下
@@ -254,6 +272,10 @@ Serial1.println("AT+CMGS=13513551355"); //这里要改成你能收到短信的�
 
 - 搜索 DHT sensor library 并安装
 - 搜索 Adafruit Unified Sensor 并安装
+
+其中 Adafruit Unified Sensor 要找到这个：
+![](http://ww3.sinaimg.cn/large/006tNc79ly1g41nsyc4x9j316s04wmxr.jpg)
+
 
 3. 在Arduino IDE中输入以下示例程序
 
@@ -342,7 +364,46 @@ void loop() {
 
 ### 2.8 红外体温计
 
-MLX90615
+1. 了解MLX90615传感器接线如下
+- VIN 接 nano的 3V
+- GND 接 nano的 GND
+- SCL 接 nano的 A4
+- SDA 接 nano的 A5
+
+2. 安装库文件
+
+使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包
+
+- 搜索 mlx90615 并安装
+
+3. 在Arduino IDE中输入以下示例程序
+
+```
+#include <Wire.h>
+#include <mlx90615.h>
+MLX90615 mlx = MLX90615();     //创建一个mlx的类
+void setup()
+{
+Serial.begin(9600);
+Serial.println("Melexis MLX90615 infra-red temperature sensor test");
+mlx.begin();     //开始
+Serial.print("Sensor ID number = ");
+Serial.println(mlx.get_id(), HEX);     //检测串口16进制码
+}
+void loop()
+{
+Serial.print("Ambient = ");
+Serial.print(mlx.get_ambient_temp());      //传感器温度
+Serial.print(" *C\tObject = ");
+Serial.print(mlx.get_object_temp());      //测量对象温度
+Serial.println(" *C");
+delay(500);
+}
+```
+
+4. 练习
+- 上传代码后打开串口监视器观察输出的数据
+
 
 ### 2.9 彩色显示屏
 
@@ -365,6 +426,23 @@ MLX90615
 保留你所需要的功能，比如显示文字则是代码中的```// large block of text```那部分。
 
 ### 2.10 OLED显示屏
+
+1. 接线说明
+ VCC - 5V
+ GND - GND
+ SDA - A4
+ SCL - A5
+
+2. 安装库文件
+使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包
+
+- 搜索 Adafruit_GFX 并安装
+- 搜索 Adafruit_SSD1306 并安装
+
+
+
+
+
 
 ### 2.11 震动马达模块
 
@@ -494,9 +572,9 @@ M1 和 M2 是电机的正负极，只需接入这两个就可以让电机转动�
 #define pinB A1      //编码器的B相 接上 nano的A1
 
 const int d_time=100;
-int speed = 255;
+int speed = 255;  //统一设置速度
 int i = 0;
-int valA = 0;
+int valA = 0;     //以下参数用于霍尔传感器测速代码
 int valB = 0;
 unsigned long duration = 0;
 unsigned long times;
@@ -519,10 +597,10 @@ void loop() {
 
   Serial.println("前");
 
-  digitalWrite(pinIN1, 1);
+  digitalWrite(pinIN1, 1);  //设置行进方向
   digitalWrite(pinIN2, 0);
-  analogWrite(pinPWM, speed);
-  SpeedCheck();
+  analogWrite(pinPWM, speed);  //启动马达
+  //SpeedCheck(); //调用测速函数，启用后可在串口监视器看到速度（霍尔传感器有接线的情况下）
   delay(2000);
 
   Serial.println("结束");
@@ -531,9 +609,9 @@ void loop() {
 
 
   Serial.println("后");
-  digitalWrite(pinIN1, 0);
+  digitalWrite(pinIN1, 0);  //设置行进方向
   digitalWrite(pinIN2, 1);
-  analogWrite(pinPWM, speed);
+  analogWrite(pinPWM, speed);  //启动马达
   delay(2000);
 
   Serial.println("结束");
@@ -578,3 +656,43 @@ void SpeedCheck()
 ![](http://ww3.sinaimg.cn/large/006tNc79ly1g3uy2thhpwj30pk0ak75j.jpg)
 顺时针转和逆时针转
 ![](http://ww2.sinaimg.cn/large/006tNc79ly1g3uy33a1eij30pk0ak3zx.jpg)
+
+6. 其它细节说明
+
+- BlueSPP 指令说明
+
+FL    FF    FR
+LL    STOP    RR
+BL    BB    BR
+
+以上指令对应中文：
+
+左前    前进    右前
+向左    停止    向右
+左后    后退    右后
+
+- 蓝牙接线说明
+
+连接蓝牙时要注意，蓝牙端的Tx，Rx对应 nano端的Rx，Tx，是反过来接的。另外在上传代码时一般需要先把Tx，Rx线拔掉才能上传成功。
+
+- 按钮连接件设计：
+
+原理如下图：
+
+![](http://ww1.sinaimg.cn/large/006tNc79ly1g41o33hi62j30ct0h4tas.jpg)
+
+图中的按钮测试用于测试Uno的板载LED小灯，我们在使用按钮控制小车时，可以让蓝色的线成为信号。
+
+- 蓝牙及按钮控制代码
+
+代码请点击[链接](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/mcar_test/car_bt_test.ino)获取
+
+代码还有不完善的地方，请自行调试并考虑：
+
+如何避免蓝牙控制和按钮控制之间的冲突？
+
+- 单元测试步骤
+
+先逐个马达调试，使用代码：[链接](https://github.com/JanusChoi/STEMPublic/blob/master/Arduino/mcar_test/car_unit_test_nano.ino)
+
+逐个马达调通之后，你会很清楚如何控制每个轮子的转动方向，然后再进行车子行动方向的编码时就能事半功倍。
