@@ -408,11 +408,12 @@ delay(500);
 ### 2.9 彩色显示屏
 
 1. 接线说明
- RS(DC)    - D08
- RST       - D09
- CS        - D10
- SDA(MOSI) - D11
- CLK(SCK)  - D13
+
+- RS(DC)    - D08
+-  RST       - D09
+- CS        - D10
+- SDA(MOSI) - D11
+- CLK(SCK)  - D13
 
 2. 安装库文件
 使用“ 项目 -> 加载库  -> 管理库工具 ” 添加相关包

@@ -33,11 +33,47 @@
 
 当红外线传感器返回值（SensorState）大于某个数值时，让LED灯开始闪烁，同时让蜂鸣器也响起来
 
+以下为整合示例，请尝试自行理解：
+```
+/*
+ * Anty Thief Alarm Arduino Tutorial
+ * by Dicson Pan @PastorEdu
+ * 人体检测out口接4
+ *
+*/
+
+#define OUT 4
+#define BUZZER 3
+
+void setup() {
+  pinMode(OUT, INPUT);
+  pinMode(BUZZER, OUTPUT);
+  //digitalWrite(BUZZER, HIGH);
+  Serial.begin(9600);
+  Serial.println("Begin to detect");
+}
+
+void loop() {
+  if (digitalRead(OUT)) {
+    Serial.println("Alarm!!!Somebody's outthere!!!");
+    alarmSound();
+  }
+  //delay(200);
+}
+
+void alarmSound(void) {
+  tone(BUZZER, 647);
+  delay(150);
+  tone(BUZZER, 1295);
+  delay(100);
+  //digitalWrite(BUZZER, HIGH);
+}
+```
+
 #### 4. 外观设计
 外形参考：
 
-![](http://ww4.sinaimg.cn/large/006tNc79gy1g3o4ofwowdj30hg0d4754.jpg)
-![](http://ww1.sinaimg.cn/large/006tNc79gy1g3o4pj8e1uj30hg0d43zq.jpg)
+原型及设计文档已交给同学
 
 需要用Fusion360修改的地方：
 - 不需要那么大的喇叭，可以把整体造型弄得更小

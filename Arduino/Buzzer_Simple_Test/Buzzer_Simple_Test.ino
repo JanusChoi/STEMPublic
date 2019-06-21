@@ -116,13 +116,13 @@ void setup() {
 
 void loop() {
   // 重复演奏小星星的第一小节
-  _tone(note_C0,50,30);
-  _tone(note_C0,50,30);
-  _tone(note_G0,50,30);
-  _tone(note_G0,50,30);
-  _tone(note_A0,50,30);
-  _tone(note_A0,50,30);
-  _tone(note_G0,50,30);
+  _tone(note_C0,100,30);
+  _tone(note_C0,100,30);
+  _tone(note_G0,100,30);
+  _tone(note_G0,100,30);
+  _tone(note_A0,100,30);
+  _tone(note_A0,100,30);
+  _tone(note_G0,100,30);
 
 }
 
