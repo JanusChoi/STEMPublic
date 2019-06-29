@@ -19,6 +19,7 @@
         -   [2.9 彩色显示屏](#29-彩色显示屏)
         -   [2.10 OLED显示屏](#210-OLED显示屏)
         -   [2.11 震动马达模块](#211-震动马达模块)
+        -   [2.12 蓝牙测距](#212-蓝牙测距)
     -   [3. 套件测试教程](#3-套件测试教程)
 
 ## 1. 准备工作
@@ -454,7 +455,7 @@ delay(500);
 /*
 示例代码
 */
-#define Sensor_IN 5; //在这里补充注释
+#define Sensor_IN 5 //在这里补充注释
 
 void setup() {
   pinMode(Sensor_IN, OUTPUT); //在这里补充注释
@@ -467,6 +468,124 @@ void loop() {
   delay(1000);
 }
 ```
+
+### 2.12 蓝牙测距
+
+使用HM-10蓝牙模块。HM-10蓝牙模块是由济南华茂科技有限公司开发，是一款主从一体的数传，远控，数据采集模块。广泛应用于工业遥控，遥测，蓝牙键盘、鼠标、游戏手柄；汽车检测设备，便携、电池供电医疗器械，自动化数据采集等等。
+
+该示例实现两块HM-10蓝牙模块的互联配对并通过RSSI蓝牙信号强度实现粗略的测距。
+
+首先，在面包板上进行接线，用大一点的面包板会更为方便一点。如下图：
+
+图
+
+然后在Arduino上编写以下蓝牙通讯程序，以便在蓝牙上执行AT指令：
+```
+#include <AltSoftSerial.h>
+SoftSerial BTserial(2,3); //D2接TX，D3接RX
+
+char c=' ';
+boolean NL = true;
+
+void setup()
+{
+    Serial.begin(9600);
+    Serial.print("代码文件:   ");   Serial.println(__FILE__);
+    Serial.print("上传成功: ");   Serial.println(__DATE__);
+    Serial.println(" ");
+
+    BTserial.begin(9600);  
+    Serial.println("BTserial 运行于波特率 9600");
+}
+
+void loop()
+{
+    // 从蓝牙读取信息返回到Arduino
+    if (BTserial.available())
+    {
+        c = BTserial.read();
+        Serial.write(c);
+    }
+
+
+    // 从串口监视器发送信息到蓝牙
+    if (Serial.available())
+    {
+        c = Serial.read();
+
+        if (c!=10 & c!=13 )
+        {  
+             BTserial.write(c);
+        }
+
+        // 返回用户输入到串口；">"字符表示为输入的字符
+        if (NL) { Serial.print("\r\n>");  NL = false; }
+        Serial.write(c);
+        if (c==10) { NL = true; }
+    }
+}
+```
+
+先用Arduino连接上需要运行从模式的蓝牙（右边的），执行AT指令：
+
+AT
+AT+RENEW
+AT+ADDR? (这里要记下蓝牙地址)
+AT+MODE2
+
+三条命令都有OK的回复即可
+
+然后用Arduino连接需要运行在主模式上的蓝牙（左边的），执行AT指令
+
+AT
+AT+RENEW
+AT+IMME1
+AT+ROLE1
+AT+CON[刚才的蓝牙地址]
+AT+RSSI?（获取已连接蓝牙的RSSI值）
+
+以上步骤测试成功后，即可把主模式的蓝牙重新上电并运行：
+
+AT+RENEW
+AT+ROLE1
+
+下次两块蓝牙都启动后，就能自动连上，我们在后续的Arduino测距程序中会继续检验这一过程。
+
+现在你手上有两块蓝牙，一块上电即运作在主模式，另一块上电即运作在从模式，当两块蓝牙同时打开时，他们可以自动连接。
+以防丢器作为例子，我们可在防丢器上放上Arduino和主模式的蓝牙，让其不断地去检测两块蓝牙直接的RSSI值。
+然后把运作在从模式的蓝牙，做成一条手带佩戴在手上实现蓝牙防丢的功能。
+
+代码实现：
+```
+#include <AltSoftSerial.h>
+AltSoftSerial BTserial;
+int rssi=0;
+
+void setup() {
+  Serial.begin(9600);
+  BTserial.begin(9600);
+}
+
+void loop() {
+  delay(2000); // 等待HM-10启动
+  BTserial.write("AT+RSSI?");  //发送AT指令获取RSSI值
+
+  while(BTserial.available()){
+    rssi = BTserial.parseInt();  //获取串口返回的第一个整数值
+  }
+
+  Serial.print("rssi: "); Serial.println(rssi);  //输出结果测试，后续可以进行校准
+
+  if(rssi != 0){
+    //以下计算公式，59为1米时 蓝牙信号强度，n为环境衰减因子，实际使用前需要校准
+    float power = (abs(rssi) - 59)/(10*2.0);
+    float distance = pow(10, power);
+    Serial.print("distance: "); Serial.println(distance);  //输出检测到的距离值
+  }
+}
+```
+
+
 
 
 ## 3. 套件测试教程
