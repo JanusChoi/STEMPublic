@@ -528,26 +528,26 @@ void loop()
 
 先用Arduino连接上需要运行从模式的蓝牙（右边的），执行AT指令：
 
-AT
-AT+RENEW
-AT+ADDR? (这里要记下蓝牙地址)
-AT+MODE2
+- AT
+- AT+RENEW
+- AT+ADDR? (这里要记下蓝牙地址)
+- AT+MODE2
 
 三条命令都有OK的回复即可
 
 然后用Arduino连接需要运行在主模式上的蓝牙（左边的），执行AT指令
 
-AT
-AT+RENEW
-AT+IMME1
-AT+ROLE1
-AT+CON[刚才的蓝牙地址]
-AT+RSSI?（获取已连接蓝牙的RSSI值）
+- AT
+- AT+RENEW
+- AT+IMME1
+- AT+ROLE1
+- AT+CON[刚才的蓝牙地址]
+- AT+RSSI?（获取已连接蓝牙的RSSI值）
 
 以上步骤测试成功后，即可把主模式的蓝牙重新上电并运行：
 
-AT+RENEW
-AT+ROLE1
+- AT+RENEW
+- AT+ROLE1
 
 下次两块蓝牙都启动后，就能自动连上，我们在后续的Arduino测距程序中会继续检验这一过程。
 

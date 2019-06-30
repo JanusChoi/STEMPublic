@@ -1,3 +1,14 @@
+/*
+ * A9G returning lat & lng
+ * Code developed by @PastorEdu
+ *
+ * 功能：通过手机蓝牙BlueSpp工具控制麦轮小车移动
+ *
+ * 使用说明：
+ * 1. 请参考代码的pin定义来接线
+ * 2. 部分行进方向代码需学生自行填充
+ */
+
 //Define the Pins
 #define  pinAIN1 4  //右前马达
 #define  pinAIN2 2  //右前马达
@@ -53,10 +64,6 @@ void loop() {
     int switch_left  = digitalRead(pinSwitchLeft);
     int switch_right = digitalRead(pinSwitchRight);
 
-  //根据两个按钮接收的信号来行进，此处需要考虑蓝牙控制和按钮控制之间可能存在的冲突
-    if ( switch_left == 1 && switch_right == 1 ) move_forward();
-    if ( switch_left == 1 && switch_right == 0 ) move_forward_right();
-    if ( switch_left == 0 && switch_right == 1 ) move_forward_left();
 }
 
 String readTtl()
